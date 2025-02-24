@@ -40,6 +40,7 @@ def label_img(name):
 
 
 def prep_and_load_data():
+    print(os.getcwd()) # for debugging
     DIR = CONST.TRAIN_DIR
     data = []
     image_paths = os.listdir(DIR)

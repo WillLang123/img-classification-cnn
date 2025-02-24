@@ -1,5 +1,5 @@
-TRAIN_DIR = '../train'
-TEST_DIR = '../test1'
+TRAIN_DIR = './train'
+TEST_DIR = './test1'
 CAT_LBL = 0
 DOG_LBL = 1
 CAT = 'cat'

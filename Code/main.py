@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from data_prep import prep_and_load_data
-from model import get_model
+#from model import get_model
 import constants as CONST
 import pickle
 import os
