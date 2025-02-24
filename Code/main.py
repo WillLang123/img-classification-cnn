@@ -4,6 +4,9 @@ from data_prep import prep_and_load_data
 from model import get_model
 import constants as CONST
 import pickle
+import os
+import cv2
+import tensorboard
 
 from matplotlib import pyplot as plt
 import copy
@@ -87,7 +90,7 @@ def process_image(directory, img_path):
 if __name__ == "__main__":
     data = np.array(prep_and_load_data())
     train_size = int(CONST.DATA_SIZE * CONST.SPLIT_RATIO)
-    print('dats', len(data), train_size)
+    print('data', len(data), train_size)
 
     train_data = data[:train_size]
     train_images = np.array([i[0] for i in train_data]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
@@ -106,9 +109,9 @@ if __name__ == "__main__":
     history = model.fit(train_images, train_labels, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images, test_labels), callbacks=[tensorboard])
     print('training done...')
 
-    model.save('18_000.h5')
+    model.save('500.h5')
 
-    history_file = '18_000_history.pickle'
+    history_file = '500_history.pickle'
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)
 
