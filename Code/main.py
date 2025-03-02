@@ -1,13 +1,11 @@
 import numpy as np
-import math
 from data_prep import prep_and_load_data
-#from model import get_model
+from model import get_model
 import constants as CONST
 import pickle
 import os
 import cv2
-import tensorboard
-
+from tensorflow.keras.callbacks import TensorBoard
 from matplotlib import pyplot as plt
 import copy
 
@@ -23,7 +21,7 @@ def plotter(history_file):
     plt.legend(['train', 'val'], loc='upper left')
     plt.show()
 
-    plt.savefig('18_000_15epoch_accuracy.png')
+    plt.savefig('1000_15epoch_accuracy.png')
 
     plt.plot(history['loss'])
     plt.plot(history['val_loss'])
@@ -32,7 +30,7 @@ def plotter(history_file):
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
     plt.show()
-    plt.savefig('18_000_15epoch_loss.png')
+    plt.savefig('1000_15epoch_loss.png')
 
 
 def video_write(model):
@@ -45,9 +43,6 @@ def video_write(model):
     fontScale = 0.5
     fontColor = (255,255,255)
     lineType  = 2
-
-    test_data = []
-    image_test_data = []
 
     DIR = CONST.TEST_DIR
     image_paths = os.listdir(DIR)
@@ -88,7 +83,7 @@ def process_image(directory, img_path):
 
 
 if __name__ == "__main__":
-    data = np.array(prep_and_load_data())
+    data = prep_and_load_data()
     train_size = int(CONST.DATA_SIZE * CONST.SPLIT_RATIO)
     print('data', len(data), train_size)
 
@@ -102,16 +97,16 @@ if __name__ == "__main__":
     test_labels = np.array([i[1] for i in test_data])
     print('data fetched..')
 
-
+    tensorboard_callback = TensorBoard(log_dir='./logs', histogram_freq=1)
 
     model = get_model()
     print('training started...')
-    history = model.fit(train_images, train_labels, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images, test_labels), callbacks=[tensorboard])
+    history = model.fit(train_images, train_labels, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images, test_labels), callbacks=[tensorboard_callback])
     print('training done...')
 
-    model.save('500.h5')
+    model.save('1000.h5')
 
-    history_file = '500_history.pickle'
+    history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)
 

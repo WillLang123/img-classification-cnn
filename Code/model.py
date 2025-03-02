@@ -5,8 +5,6 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, BatchNo
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import TensorBoard
 
-import time
-import os
 import constants as CONST
 
 def get_model():

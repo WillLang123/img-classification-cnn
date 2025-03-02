@@ -1,2 +1,6 @@
 .venv
 ./Code/__pycache__/
+.h5
+.pickle
+./Code/models
+./logs
