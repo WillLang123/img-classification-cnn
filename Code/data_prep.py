@@ -5,12 +5,12 @@ import constants as CONST
 import cv2
 from PIL import Image
 
-def get_size_statistics():
+def get_size_statistics(dir):
     heights = []
     widths = []
     img_count = 0
-    DIR = CONST.TRAIN_DIR
-    for img in os.listdir(CONST.TRAIN_DIR):
+    DIR = dir
+    for img in os.listdir(dir):
         path = os.path.join(DIR, img)
         data = cv2.imread(path)
         data = np.array(Image.open(path))
@@ -27,7 +27,8 @@ def get_size_statistics():
     print("Max Width: " + str(max(widths)))
     print("Min Width: " + str(min(widths)))
 
-get_size_statistics()
+get_size_statistics(CONST.TRAIN_DIR_1)
+get_size_statistics(CONST.TRAIN_DIR_2)
 
 
 def label_img(name):
@@ -38,9 +39,9 @@ def label_img(name):
     return label_arr
 
 
-def prep_and_load_data():
+def prep_and_load_data(dir):
     print(os.getcwd()) # for debugging
-    DIR = CONST.TRAIN_DIR
+    DIR = dir
     data = []
     image_paths = os.listdir(DIR)
     shuffle(image_paths)
@@ -61,4 +62,5 @@ def prep_and_load_data():
     return data
 
 if __name__ == "__main__":
-    prep_and_load_data()
+    prep_and_load_data(CONST.TRAIN_DIR_1)
+    prep_and_load_data(CONST.TRAIN_DIR_2)

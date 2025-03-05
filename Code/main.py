@@ -83,35 +83,55 @@ def process_image(directory, img_path):
 
 
 if __name__ == "__main__":
-    data = prep_and_load_data()
+    data1 = prep_and_load_data(CONST.TRAIN_DIR_1)
+    data2 = prep_and_load_data(CONST.TRAIN_DIR_2)
+
     train_size = int(CONST.DATA_SIZE * CONST.SPLIT_RATIO)
-    print('data', len(data), train_size)
+    print('data1', len(data1), train_size)
+    print('data2', len(data2), train_size)
 
-    train_data = data[:train_size]
-    train_images = np.array([i[0] for i in train_data]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
-    train_labels = np.array([i[1] for i in train_data])
-    print('train data fetched..')
+    train_data1 = data1[:train_size]
+    train_images1 = np.array([i[0] for i in train_data1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
+    train_labels1 = np.array([i[1] for i in train_data1])
+    print('train data1 fetched..')
 
-    test_data = data[train_size:]
-    test_images = np.array([i[0] for i in test_data]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
-    test_labels = np.array([i[1] for i in test_data])
-    print('data fetched..')
+    train_data2 = data2[:train_size]
+    train_images2 = np.array([i[0] for i in train_data2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
+    train_labels2 = np.array([i[1] for i in train_data2])
+    print('train data2 fetched..')
+
+    test_data1 = data1[train_size:]
+    test_images1 = np.array([i[0] for i in test_data1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
+    test_labels1 = np.array([i[1] for i in test_data1])
+    print('data1 fetched..')
+
+    test_data2 = data2[train_size:]
+    test_images2 = np.array([i[0] for i in test_data2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)
+    test_labels2 = np.array([i[1] for i in test_data2])
+    print('data2 fetched..')
 
     tensorboard_callback = TensorBoard(log_dir='./logs', histogram_freq=1)
 
-    model = get_model()
-    print('training started...')
-    history = model.fit(train_images, train_labels, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images, test_labels), callbacks=[tensorboard_callback])
-    print('training done...')
+    model1 = get_model()
+    print('dataset 1 training started...')
+    history = model1.fit(train_images1, train_labels1, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images1, test_labels1), callbacks=[tensorboard_callback])
+    print('dataset 1 training done...')
 
-    model.save('1000.h5')
+    model2 = get_model()
+    print('dataset 2 training started...')
+    history = model2.fit(train_images2, train_labels2, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images2, test_labels2), callbacks=[tensorboard_callback])
+    print('dataset 2 training done...')
+
+    model1.save('1000_1.h5')
+    model2.save('1000_2.h5')
 
     history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)
 
     plotter(history_file)
-    video_write(model)
+    video_write(model1)
+    video_write(model2)
 
 
 

@@ -4,3 +4,4 @@
 .pickle
 ./Code/models
 ./logs
+.csv
