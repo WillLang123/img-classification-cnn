@@ -63,8 +63,8 @@ def video_write(model):
             fontColor,
             lineType)
         
-        frame = cv2.resize(frame, (400, 400))
-        out.write(frame)
+        image = cv2.resize(image, (400, 400))
+        out.write(image)
         
         count += 1
         print(count)
