@@ -81,6 +81,9 @@ def process_image(directory, img_path):
     image_std = image.astype('float') / 255.0
     return image_copy, image_std
 
+def cnn_main():
+    print("Placeholder")
+
 
 if __name__ == "__main__":
     data1 = prep_and_load_data(CONST.TRAIN_DIR_1)
@@ -117,19 +120,21 @@ if __name__ == "__main__":
     history = model1.fit(train_images1, train_labels1, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images1, test_labels1), callbacks=[tensorboard_callback])
     print('dataset 1 training done...')
 
+    history_file = '1000_history.pickle'
+    with open(history_file, 'wb') as file:
+        pickle.dump(history.history, file)
+    plotter(history_file)
+
     model2 = get_model()
     print('dataset 2 training started...')
     history = model2.fit(train_images2, train_labels2, batch_size = 50, epochs = 15, verbose = 1, validation_data=(test_images2, test_labels2), callbacks=[tensorboard_callback])
     print('dataset 2 training done...')
 
-    model1.save('1000_1.h5')
-    model2.save('1000_2.h5')
-
     history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)
-
     plotter(history_file)
+
     video_write(model1)
     video_write(model2)
 
