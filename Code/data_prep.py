@@ -28,8 +28,8 @@ def get_size_statistics(dir):
     print("Max Width: " + str(max(widths)))  # max width
     print("Min Width: " + str(min(widths)))  # min width
 
-get_size_statistics(CONST.TRAIN_DIR_1)  # get stats for train1
-get_size_statistics(CONST.TRAIN_DIR_2)  # get stats for train2
+# get_size_statistics(CONST.TRAIN_DIR_1)  # get stats for train1
+# get_size_statistics(CONST.TRAIN_DIR_2)  # get stats for train2
 
 # labels image based on filename
 def label_img(name):
