@@ -3,6 +3,8 @@ import pickle
 import os
 import cv2
 from tensorflow.keras.callbacks import TensorBoard
+import tensorflow as tf
+from sklearn.svm import SVC
 import constants as CONST
 from data_prep import prep_and_load_data
 from model import get_model
@@ -10,9 +12,12 @@ from svm import svm_predict, load_svm_model, svm_train
 from utils import plotter, process_image  # Import functions directly from utils
 
 # writes predictions to video
+import tensorflow as tf
+from sklearn.svm import SVC
+
 def video_write(model, i):
     fourcc = cv2.VideoWriter_fourcc(*'DIVX')  # codec
-    filename = "./prediction"+str(i)+".mp4"
+    filename = "./prediction" + str(i) + ".mp4"
     out = cv2.VideoWriter(filename, fourcc, 1.0, (400, 400))  # output video
 
     val_map = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
@@ -25,24 +30,48 @@ def video_write(model, i):
 
     DIR = CONST.TEST_DIR
     image_paths = os.listdir(DIR)
-    image_paths = image_paths[:100]  # limit to 200 images
+    image_paths = image_paths[:100]  # limit to 100 images
     count = 0
+
     for img_path in image_paths:
         image, image_std = process_image(DIR, img_path)  # process image
         
-        image_std = image_std.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image
-        pred = model.predict([image_std])  # make prediction
-        arg_max = np.argmax(pred, axis=1)
-        max_val = np.max(pred, axis=1)
-        s = val_map[arg_max[0]] + ' - ' + str(max_val[0] * 100) + '%'
-        cv2.putText(image, s, location, font, fontScale, fontColor, lineType)  # add text to image
+        if isinstance(model, SVC):  # If it's an SVM model
+            # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
+            image_flattened = image_std.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
+            pred = svm_predict(model, image_flattened)  # Use SVM model prediction
+
+            # For SVM: pred is a single class label (either 0 or 1)
+            # SVM is a hard classifier, so we assume 100% confidence
+            arg_max = pred  # Directly use the label as arg_max
+
+            # For SVM, just show the label and assume 100% confidence
+            s = val_map[int(arg_max[0])] + ' - ' + '100%'  # Always 100% for SVM
+            
+        elif isinstance(model, tf.keras.Model):  # If it's a CNN model (TensorFlow Keras Model)
+            image_std = image_std.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image to fit CNN
+            pred = model.predict(image_std)  # Keras CNN prediction
+
+            # For CNN: pred will be a probability vector, so we extract the class with the highest probability
+            arg_max = np.argmax(pred, axis=1)  # Get the class with highest probability
+            max_val = np.max(pred, axis=1)  # Get the highest probability
+
+            # For CNN, show the label and the percentage from the max value
+            s = val_map[arg_max[0]] + ' - ' + str(max_val[0] * 100) + '%'
+
+        else:
+            raise TypeError("Unknown model type: " + str(type(model)))
         
+        # Add the prediction to the image
+        cv2.putText(image, s, location, font, fontScale, fontColor, lineType)  # add text to image
+
         image = cv2.resize(image, (400, 400))  # resize image
         out.write(image)  # write to video
         
         count += 1
         print(count)  # print progress
     out.release()  # release video
+
 
 # loads and preps images for models
 if __name__ == "__main__":
@@ -122,7 +151,7 @@ if __name__ == "__main__":
     # svm_train_labels2 = np.array([i[1] for i in data2])  # labels from data2
 
     # # trains svm models
-    # svm_model1 = svm_train(svm_train_data1, svm_train_labels1, model_name="svm_model1.pkl")
+    # svm_model1 = svm_train(data1, model_name="svm_model1.pkl")
     # svm_model2 = svm_train(svm_train_data2, svm_train_labels2, model_name="svm_model2.pkl")
 
     # # loads svm models and make predictions
@@ -135,5 +164,5 @@ if __name__ == "__main__":
     # print("SVM 2 Predictions on test data2:", svm_predictions_test2)  # print svm model 2 predictions
 
     # # writes classification answer
-    # video_write(svm_model1,3)  # write model 1 predictions to video
+    # video_write(loaded_svm_model1,3)  # write model 1 predictions to video
     # video_write(svm_model2,4)  # write model 2 predictions to video
