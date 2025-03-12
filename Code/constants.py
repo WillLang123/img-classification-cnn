@@ -9,6 +9,7 @@ LABEL_MAP = {
     CAT: CAT_LBL,
     DOG: DOG_LBL
 }
-DATA_SIZE = 100
+DATA_SIZE = 100 # manages amount of input data coming in
 IMG_SIZE = 110
 SPLIT_RATIO = 0.8
+OUTPUT_SIZE = 100 # manages size of output
