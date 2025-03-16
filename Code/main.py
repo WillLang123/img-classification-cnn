@@ -4,7 +4,9 @@ import os
 import cv2
 from tensorflow.keras.callbacks import TensorBoard
 import tensorflow as tf
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
+#from sklearnex import  patch_sklearn
+#patch_sklearn()
 import constants as CONST
 from data_prep import prep_and_load_data
 from model import get_model
@@ -12,9 +14,6 @@ from svm import svm_predict, load_svm_model, svm_train
 from utils import plotter, process_image  # Import functions directly from utils
 
 # writes predictions to video
-import tensorflow as tf
-from sklearn.svm import SVC
-
 def video_write(model, i):
     fourcc = cv2.VideoWriter_fourcc(*'DIVX')  # codec
     filename = "./prediction" + str(i) + ".mp4"
@@ -37,7 +36,7 @@ def video_write(model, i):
     for img_path in image_paths:
         image, image_std = process_image(DIR, img_path)  # process image
         
-        if isinstance(model, SVC):  # If it's an SVM model
+        if isinstance(model, LinearSVC):  # If it's an SVM model
             # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
             image_flattened = image_std.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
             pred = svm_predict(model, image_flattened)  # Use SVM model prediction
@@ -153,7 +152,7 @@ if __name__ == "__main__":
 
     # trains svm models
     svm_model1 = svm_train(data1, model_name="svm_model1.pkl")
-    svm_model2 = svm_train(svm_train_data2, svm_train_labels2, model_name="svm_model2.pkl")
+    svm_model2 = svm_train(data2, model_name="svm_model2.pkl")
 
     # loads svm models and make predictions
     loaded_svm_model1 = load_svm_model(model_name="svm_model1.pkl")
@@ -166,4 +165,4 @@ if __name__ == "__main__":
 
     # writes classification answer
     video_write(loaded_svm_model1,3)  # write model 1 predictions to video
-    video_write(svm_model2,4)  # write model 2 predictions to video
+    video_write(loaded_svm_model2,4)  # write model 2 predictions to video

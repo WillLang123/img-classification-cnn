@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 from data_prep import prep_and_load_data
@@ -22,7 +22,7 @@ def svm_train(data, model_name="svm_model.pkl"):
 
     # Train SVM model
     print("making svm")
-    svm_classifier = SVC(kernel='linear', probability=True)  # linear SVM
+    svm_classifier = LinearSVC()  # linear SVM
     print("training svm")
     svm_classifier.fit(X_train, y_train)
 
