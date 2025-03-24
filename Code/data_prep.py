@@ -18,13 +18,13 @@ def get_size_statistics(dir):
         heights.append(data.shape[0])  # height of image
         widths.append(data.shape[1])  # width of image
         img_count += 1
-    avg_height = sum(heights) / len(heights)  # average height
-    avg_width = sum(widths) / len(widths)  # average width
-    print("Average Height: " + str(avg_height))
+    avgHeight = sum(heights) / len(heights)  # average height
+    avgWidth = sum(widths) / len(widths)  # average width
+    print("Average Height: " + str(avgHeight))
     print("Max Height: " + str(max(heights)))  # max height
     print("Min Height: " + str(min(heights)))  # min height
     print('\n')
-    print("Average Width: " + str(avg_width))
+    print("Average Width: " + str(avgWidth))
     print("Max Width: " + str(max(widths)))  # max width
     print("Min Width: " + str(min(widths)))  # min width
 
@@ -59,7 +59,7 @@ def prep_and_load_data(dir):
         if count == CONST.DATA_SIZE:  # limit to DATA_SIZE images
             break
     shuffle(data)  # shuffle data after loading
-    data = np.array(data, dtype=object)
+    data = np.array(data, dtype=object) #need it to be object datatype for some numpy reason
     return data
 
 if __name__ == "__main__":
