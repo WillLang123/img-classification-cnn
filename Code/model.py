@@ -6,7 +6,7 @@ from tensorflow.keras.callbacks import TensorBoard
 import constants as CONST
 
 # builds the CNN model
-def get_model():
+def getCNNModel():
     model = tf.keras.Sequential()#Sequential()
     model.add(Conv2D(32, kernel_size = (3, 3), activation='relu', input_shape=(CONST.IMG_SIZE, CONST.IMG_SIZE, 3)))
     model.add(MaxPooling2D(pool_size=(2,2)))

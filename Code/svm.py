@@ -7,7 +7,7 @@ import constants as CONST
 import pickle
 import os
 
-def svm_train(data, model_name="svm_model.pkl"):
+def SVMTrain(data, model_name="svm_model.pkl"):
     images = np.array([i[0] for i in data])  # get images
     labels = np.array([i[1] for i in data])  # get labels
 
@@ -41,7 +41,7 @@ def svm_train(data, model_name="svm_model.pkl"):
 
 
 # loads the saved SVM model
-def load_svm_model(model_name="svm_model.pkl"):
+def loadSVMModel(model_name="svm_model.pkl"):
     try:
         with open(model_name, 'rb') as model_file:
             svm_classifier = pickle.load(model_file)
@@ -52,7 +52,7 @@ def load_svm_model(model_name="svm_model.pkl"):
         return None
 
 # makes predictions with SVM model
-def svm_predict(model, images):
+def SVMPredict(model, images):
     images_flattened = images.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)  # flatten images
     if(model is not None):
         return model.predict(images_flattened)  # return predictions
