@@ -89,29 +89,29 @@ if __name__ == "__main__":
     tensorboard_callback = TensorBoard(log_dir='./logs', histogram_freq=1)
 
     # splits the data into training and testing sets for both datasets
-    train_data1 = data1[:trainingSize]  # training data from dataset 1
-    train_images1 = np.array([i[0] for i in train_data1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    train_labels1 = np.array([i[1] for i in train_data1])  # labels for dataset 1
+    trainData1 = data1[:trainingSize]  # training data from dataset 1
+    trainImages1 = np.array([i[0] for i in trainData1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainLabels1 = np.array([i[1] for i in trainData1])  # labels for dataset 1
 
-    train_data2 = data2[:trainingSize]  # training data from dataset 2
-    train_images2 = np.array([i[0] for i in train_data2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    train_labels2 = np.array([i[1] for i in train_data2])  # labels for dataset 2
+    trainData2 = data2[:trainingSize]  # training data from dataset 2
+    trainImages2 = np.array([i[0] for i in trainData2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainLabels2 = np.array([i[1] for i in trainData2])  # labels for dataset 2
 
     # splits the data into test sets for both datasets
-    test_data1 = data1[trainingSize:]  # test data from dataset 1
-    test_images1 = np.array([i[0] for i in test_data1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    test_labels1 = np.array([i[1] for i in test_data1])  # test labels for dataset 1
+    testData1 = data1[trainingSize:]  # test data from dataset 1
+    testImages1 = np.array([i[0] for i in testData1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testLabels1 = np.array([i[1] for i in testData1])  # test labels for dataset 1
 
-    test_data2 = data2[trainingSize:]  # test data from dataset 2
-    test_images2 = np.array([i[0] for i in test_data2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    test_labels2 = np.array([i[1] for i in test_data2])  # test labels for dataset 2
+    testData2 = data2[trainingSize:]  # test data from dataset 2
+    testImages2 = np.array([i[0] for i in testData2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testLabels2 = np.array([i[1] for i in testData2])  # test labels for dataset 2
 
     # gets model to use
     model1 = getCNNModel()  # get CNN model for dataset 1
     print('dataset 1 training started...')
     history = model1.fit(
-        train_images1, train_labels1, batch_size=50, epochs=15, verbose=1,
-        validation_data=(test_images1, test_labels1), callbacks=[tensorboard_callback]
+        trainImages1, trainLabels1, batch_size=50, epochs=15, verbose=1,
+        validation_data=(testImages1, testLabels1), callbacks=[tensorboard_callback]
     )
     print('dataset 1 training done...')
 
@@ -127,8 +127,8 @@ if __name__ == "__main__":
     model2 = getCNNModel()  # get CNN model for dataset 2
     print('dataset 2 training started...')
     history = model2.fit(
-        train_images2, train_labels2, batch_size=50, epochs=15, verbose=1,
-        validation_data=(test_images2, test_labels2), callbacks=[tensorboard_callback]
+        trainImages2, trainLabels2, batch_size=50, epochs=15, verbose=1,
+        validation_data=(testImages2, testLabels2), callbacks=[tensorboard_callback]
     )
     print('dataset 2 training done...')
 
@@ -144,25 +144,19 @@ if __name__ == "__main__":
     videoWrite(model1,1)  # write model 1 predictions to video
     videoWrite(model2,2)  # write model 2 predictions to video
 
-    # prepares data for svm training
-    svm_train_data1 = np.array([i[0] for i in data1])  # images from data1
-    svm_train_labels1 = np.array([i[1] for i in data1])  # labels from data1
-    svm_train_data2 = np.array([i[0] for i in data2])  # images from data2
-    svm_train_labels2 = np.array([i[1] for i in data2])  # labels from data2
-
     # trains svm models
-    svm_model1 = SVMTrain(data1, model_name="svm_model1.pkl")
-    svm_model2 = SVMTrain(data2, model_name="svm_model2.pkl")
+    SVMModel1 = SVMTrain(data1, model_name="svm_model1.pkl")
+    SVMModel2 = SVMTrain(data2, model_name="svm_model2.pkl")
 
     # loads svm models and make predictions
-    loaded_svm_model1 = loadSVMModel(model_name="svm_model1.pkl")
-    svm_predictions_test1 = SVMPredict(loaded_svm_model1, test_images1)
-    print("SVM 1 Predictions on test data1:", svm_predictions_test1)  # print svm model 1 predictions
+    loadedSVMModel1 = loadSVMModel(model_name="svm_model1.pkl")
+    SVMPredictions1 = SVMPredict(loadedSVMModel1, testImages1)
+    print("SVM 1 Predictions on test data1:", SVMPredictions1)  # print svm model 1 predictions
 
-    loaded_svm_model2 = loadSVMModel(model_name="svm_model2.pkl")
-    svm_predictions_test2 = SVMPredict(loaded_svm_model2, test_images2)
-    print("SVM 2 Predictions on test data2:", svm_predictions_test2)  # print svm model 2 predictions
+    loadedSVMModel2 = loadSVMModel(model_name="svm_model2.pkl")
+    SVMPredictions2 = SVMPredict(loadedSVMModel2, testImages2)
+    print("SVM 2 Predictions on test data2:", SVMPredictions2)  # print svm model 2 predictions
 
     # writes classification answer
-    videoWrite(loaded_svm_model1,3)  # write model 1 predictions to video
-    videoWrite(loaded_svm_model2,4)  # write model 2 predictions to video
+    videoWrite(loadedSVMModel1,3)  # write model 1 predictions to video
+    videoWrite(loadedSVMModel2,4)  # write model 2 predictions to video
