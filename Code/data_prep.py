@@ -5,32 +5,6 @@ import constants as CONST
 import cv2
 from PIL import Image
 
-# gets size statistics of images in directory
-def get_size_statistics(dir):
-    heights = []
-    widths = []
-    img_count = 0
-    DIR = dir
-    for img in os.listdir(dir):
-        path = os.path.join(DIR, img)
-        data = cv2.imread(path)
-        data = np.array(Image.open(path))
-        heights.append(data.shape[0])  # height of image
-        widths.append(data.shape[1])  # width of image
-        img_count += 1
-    avgHeight = sum(heights) / len(heights)  # average height
-    avgWidth = sum(widths) / len(widths)  # average width
-    print("Average Height: " + str(avgHeight))
-    print("Max Height: " + str(max(heights)))  # max height
-    print("Min Height: " + str(min(heights)))  # min height
-    print('\n')
-    print("Average Width: " + str(avgWidth))
-    print("Max Width: " + str(max(widths)))  # max width
-    print("Min Width: " + str(min(widths)))  # min width
-
-# get_size_statistics(CONST.TRAIN_DIR_1)  # get stats for train1
-# get_size_statistics(CONST.TRAIN_DIR_2)  # get stats for train2
-
 # labels image based on filename
 def label_img(name):
     word_label = name.split('.')[0]
