@@ -5,13 +5,11 @@ import cv2
 from tensorflow.keras.callbacks import TensorBoard
 import tensorflow as tf
 from sklearn.svm import LinearSVC
-#from sklearnex import  patch_sklearn
-#patch_sklearn()
 import constants as CONST
 from data_prep import prep_and_load_data
 from model import getCNNModel
 from svm import SVMPredict, loadSVMModel, SVMTrain
-from utils import plotter, process_image  # Import functions directly from utils
+from utils import process_image  # Import functions directly from utils
 
 # writes predictions to video
 def videoWrite(model, i):
@@ -29,16 +27,16 @@ def videoWrite(model, i):
 
     DIR = CONST.TEST_DIR
     MAX = CONST.OUTPUT_SIZE
-    image_paths = os.listdir(DIR)
-    image_paths = image_paths[:MAX]  # limit to 100 images
+    imagePaths = os.listdir(DIR)
+    imagePaths = imagePaths[:MAX]  # limit to 100 images
     count = 0
 
-    for img_path in image_paths:
-        image, image_std = process_image(DIR, img_path)  # process image
+    for imagePath in imagePaths:
+        image, normImage = process_image(DIR, imagePath)  # process image
         
         if isinstance(model, LinearSVC):  # If it's an SVM model
             # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
-            image_flattened = image_std.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
+            image_flattened = normImage.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
             pred = SVMPredict(model, image_flattened)  # Use SVM model prediction
 
             # For SVM: pred is a single class label (either 0 or 1)
@@ -49,8 +47,8 @@ def videoWrite(model, i):
             s = val_map[int(arg_max[0])] + ' - ' + '100%'  # Always 100% for SVM
             
         elif isinstance(model, tf.keras.Model):  # If it's a CNN model (TensorFlow Keras Model)
-            image_std = image_std.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image to fit CNN
-            pred = model.predict(image_std)  # Keras CNN prediction
+            normImage = normImage.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image to fit CNN
+            pred = model.predict(normImage)  # Keras CNN prediction
 
             # For CNN: pred will be a probability vector, so we extract the class with the highest probability
             arg_max = np.argmax(pred, axis=1)  # Get the class with highest probability
@@ -120,8 +118,6 @@ if __name__ == "__main__":
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)  # save history of training
 
-    # plots training history
-    plotter(history_file)  # plot accuracy and loss graphs
 
     # trains model 2
     model2 = getCNNModel()  # get CNN model for dataset 2
@@ -136,9 +132,6 @@ if __name__ == "__main__":
     history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
         pickle.dump(history.history, file)  # save history of training
-
-    # plots training history
-    plotter(history_file)  # plot accuracy and loss graphs
 
     # writes output to video
     videoWrite(model1,1)  # write model 1 predictions to video
