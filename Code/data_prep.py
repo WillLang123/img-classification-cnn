@@ -3,27 +3,26 @@ import os
 from random import shuffle
 import constants as CONST
 import cv2
-from PIL import Image
 
 # labels image based on filename
-def label_img(name):
-    word_label = name.split('.')[0]
-    label = CONST.LABEL_MAP[word_label]
-    label_arr = np.zeros(2)
-    label_arr[label] = 1
-    return label_arr
+def labelImage(name):
+    imageLabel = name.split('.')[0]
+    label = CONST.LABEL_MAP[imageLabel]
+    labels = np.zeros(2)
+    labels[label] = 1
+    return labels
 
 # loads and prepares image data
 def prep_and_load_data(dir):
     print(os.getcwd())  # for debugging
     DIR = dir
     data = []
-    image_paths = os.listdir(DIR)
-    shuffle(image_paths)  # shuffle image paths for randomness
+    imagePaths = os.listdir(DIR)
+    shuffle(imagePaths)  # shuffle image paths for randomness
     count = 0
-    for img_path in image_paths:
-        label = label_img(img_path)  # get label for image
-        path = os.path.join(DIR, img_path)
+    for imagePath in imagePaths:
+        label = labelImage(imagePath)  # get label for image
+        path = os.path.join(DIR, imagePath)
         image = cv2.imread(path)  # read image
         image = cv2.resize(image, (CONST.IMG_SIZE, CONST.IMG_SIZE))  # resize image
         image = image.astype('float') / 255.0  # normalize image

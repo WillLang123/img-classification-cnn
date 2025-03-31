@@ -5,7 +5,6 @@ from sklearn.metrics import classification_report, accuracy_score
 from data_prep import prep_and_load_data
 import constants as CONST
 import pickle
-import os
 
 def SVMTrain(data, model_name="svm_model.pkl"):
     images = np.array([i[0] for i in data])  # get images

@@ -3,8 +3,6 @@ import os
 import cv2
 import copy
 import constants as CONST
-import pickle
-import matplotlib.pyplot as plt
 
 # processes the image (resize and normalize)
 def process_image(directory, imagePath):

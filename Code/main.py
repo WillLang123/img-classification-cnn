@@ -17,10 +17,10 @@ def videoWrite(model, i):
     filename = "./prediction" + str(i) + ".mp4"
     out = cv2.VideoWriter(filename, fourcc, 1.0, (400, 400))  # output video
 
-    val_map = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
+    prediction = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
 
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    location = (20, 20)
+    font = cv2.FONT_HERSHEY_DUPLEX
+    location = (20, 30)
     fontScale = 0.5
     fontColor = (255, 255, 255)
     lineType = 2
@@ -44,7 +44,7 @@ def videoWrite(model, i):
             arg_max = pred  # Directly use the label as arg_max
 
             # For SVM, just show the label and assume 100% confidence
-            s = val_map[int(arg_max[0])] + ' - ' + '100%'  # Always 100% for SVM
+            s = prediction[int(arg_max[0])] + ' - ' + '100%'  # Always 100% for SVM
             
         elif isinstance(model, tf.keras.Model):  # If it's a CNN model (TensorFlow Keras Model)
             normImage = normImage.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image to fit CNN
@@ -55,7 +55,7 @@ def videoWrite(model, i):
             max_val = np.max(pred, axis=1)  # Get the highest probability
 
             # For CNN, show the label and the percentage from the max value
-            s = val_map[arg_max[0]] + ' - ' + str(max_val[0] * 100) + '%'
+            s = prediction[arg_max[0]] + ' - ' + str(max_val[0] * 100) + '%'
 
         else:
             raise TypeError("Unknown model type: " + str(type(model)))
