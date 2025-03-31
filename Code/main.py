@@ -122,10 +122,10 @@ if __name__ == "__main__":
     )
     print('dataset 1 training done...')
 
-    # trains model
+    # save history of training
     history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
-        pickle.dump(history.history, file)  # save history of training
+        pickle.dump(history.history, file)
 
 
     # trains model 2
@@ -137,10 +137,10 @@ if __name__ == "__main__":
     )
     print('dataset 2 training done...')
 
-    # trains model
+    # save history of training
     history_file = '1000_history.pickle'
     with open(history_file, 'wb') as file:
-        pickle.dump(history.history, file)  # save history of training
+        pickle.dump(history.history, file)
 
     # writes output to video
     videoWrite(model1,1)  # write model 1 predictions to video
