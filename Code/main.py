@@ -2,6 +2,7 @@ import numpy as np
 import pickle
 import os
 import cv2
+import copy
 from tensorflow.keras.callbacks import TensorBoard
 import tensorflow as tf
 from sklearn.svm import LinearSVC
@@ -9,7 +10,15 @@ import constants as CONST
 from data_prep import prep_and_load_data
 from model import getCNNModel
 from svm import SVMPredict, loadSVMModel, SVMTrain
-from utils import process_image  # Import functions directly from utils
+
+def processImage(directory, imagePath):
+    path = os.path.join(directory, imagePath)
+    image = cv2.imread(path)  # read image
+    imageCopy = copy.deepcopy(image)  # copy image
+
+    image = cv2.resize(image, (CONST.IMG_SIZE, CONST.IMG_SIZE))  # resize image
+    normImage = image.astype('float') / 255.0  # normalize image
+    return imageCopy, normImage  # return processed image
 
 # writes predictions to video
 def videoWrite(model, i):
@@ -32,7 +41,7 @@ def videoWrite(model, i):
     count = 0
 
     for imagePath in imagePaths:
-        image, normImage = process_image(DIR, imagePath)  # process image
+        image, normImage = processImage(DIR, imagePath)  # process image
         
         if isinstance(model, LinearSVC):  # If it's an SVM model
             # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
