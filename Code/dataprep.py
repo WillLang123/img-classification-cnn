@@ -13,7 +13,7 @@ def labelImage(name):
     return labels
 
 # loads and prepares image data
-def prep_and_load_data(dir):
+def prepData(dir):
     print(os.getcwd())  # for debugging
     DIR = dir
     data = []
@@ -36,5 +36,5 @@ def prep_and_load_data(dir):
     return data
 
 if __name__ == "__main__":
-    prep_and_load_data(CONST.TRAIN_DIR_1)  # load and prep data for train1
-    prep_and_load_data(CONST.TRAIN_DIR_2)  # load and prep data for train2
+    prepData(CONST.TRAIN_DIR_1)  # load and prep data for train1
+    prepData(CONST.TRAIN_DIR_2)  # load and prep data for train2

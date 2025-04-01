@@ -7,8 +7,8 @@ from tensorflow.keras.callbacks import TensorBoard
 import tensorflow as tf
 from sklearn.svm import LinearSVC
 import constants as CONST
-from data_prep import prep_and_load_data
-from model import getCNNModel
+from dataprep import prepData
+from cnn import getCNNModel
 from svm import SVMPredict, loadSVMModel, SVMTrain
 
 def processImage(directory, imagePath):
@@ -84,8 +84,8 @@ def videoWrite(model, i):
 if __name__ == "__main__":
 
     # loads and preps images for models
-    data1 = prep_and_load_data(CONST.TRAIN_DIR_1)  # loading images from train1
-    data2 = prep_and_load_data(CONST.TRAIN_DIR_2)  # loading images from train2
+    data1 = prepData(CONST.TRAIN_DIR_1)  # loading images from train1
+    data2 = prepData(CONST.TRAIN_DIR_2)  # loading images from train2
 
     # figures out data size and what goes where
     trainingSize = int(CONST.DATA_SIZE * CONST.SPLIT_RATIO)

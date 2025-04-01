@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
-from data_prep import prep_and_load_data
+from dataprep import prepData
 import constants as CONST
 import pickle
 
