@@ -28,7 +28,7 @@ def videoWrite(model, i):
 
     prediction = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
 
-    font = cv2.FONT_HERSHEY_DUPLEX
+    font = cv2.FONT_HERSHEY_SIMPLEX
     location = (20, 30)
     fontScale = 0.5
     fontColor = (255, 255, 255)
@@ -97,21 +97,37 @@ if __name__ == "__main__":
 
     # splits the data into training and testing sets for both datasets
     trainData1 = data1[:trainingSize]  # training data from dataset 1
-    trainImages1 = np.array([i[0] for i in trainData1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    trainLabels1 = np.array([i[1] for i in trainData1])  # labels for dataset 1
+    trainImages1, trainLabels1 = [], []
+    for item in trainData1:
+        trainImages1.append(item[0])
+        trainLabels1.append(item[1])
+    trainImages1 = np.array(trainImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainLabels1 = np.array(trainLabels1)
 
     trainData2 = data2[:trainingSize]  # training data from dataset 2
-    trainImages2 = np.array([i[0] for i in trainData2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    trainLabels2 = np.array([i[1] for i in trainData2])  # labels for dataset 2
+    trainImages2, trainLabels2 = [], []
+    for item in trainData2:
+        trainImages2.append(item[0])
+        trainLabels2.append(item[1])
+    trainImages2 = np.array(trainImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainLabels2 = np.array(trainLabels2)
 
     # splits the data into test sets for both datasets
     testData1 = data1[trainingSize:]  # test data from dataset 1
-    testImages1 = np.array([i[0] for i in testData1]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    testLabels1 = np.array([i[1] for i in testData1])  # test labels for dataset 1
+    testImages1, testLabels1 = [], []
+    for item in testData1:
+        testImages1.append(item[0])
+        testLabels1.append(item[1])
+    testImages1 = np.array(testImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testLabels1 = np.array(testLabels1)
 
     testData2 = data2[trainingSize:]  # test data from dataset 2
-    testImages2 = np.array([i[0] for i in testData2]).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    testLabels2 = np.array([i[1] for i in testData2])  # test labels for dataset 2
+    testImages2, testLabels2 = [], []
+    for item in testData2:
+        testImages2.append(item[0])
+        testLabels2.append(item[1])
+    testImages2 = np.array(testImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testLabels2 = np.array(testLabels2)
 
     # gets model to use
     model1 = getCNNModel()  # get CNN model for dataset 1

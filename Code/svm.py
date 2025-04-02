@@ -1,36 +1,34 @@
 import numpy as np
+import constants as CONST
+import pickle
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
-import constants as CONST
-import pickle
 
 def SVMTrain(data, model_name="svm_model.pkl"):
     images = np.array([i[0] for i in data])  # get images
     labels = np.array([i[1] for i in data])  # get labels
-
-    # Convert from one-hot encoding to scalar labels
-    labels = np.argmax(labels, axis=1)  # Convert one-hot encoded labels to class labels (0 or 1)
+    labels = np.argmax(labels, axis=1)  # Convert encoded labels to class labels (0 or 1)
 
     # Flatten images for SVM
-    flattenedImages = images.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)  # flatten image for SVM input
+    flattenedImages = images.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
 
     # Split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(flattenedImages, labels, test_size=0.2, random_state=42)
+    xTrain, xTest, yTrain, yTest = train_test_split(flattenedImages, labels, test_size=0.2, random_state=42)
 
     # Train SVM model
     print("making svm")
     svm = LinearSVC()  # linear SVM
     print("training svm")
-    svm.fit(X_train, y_train)
+    svm.fit(xTrain, yTrain)
 
     # Make predictions on test set
     print("fixing SVM")
-    y_pred = svm.predict(X_test)
+    yPred = svm.predict(xTest)
     print("SVM Model Performance on Test Data:")
-    print("Accuracy: ", accuracy_score(y_test, y_pred))  # Print accuracy
+    print("Accuracy: ", accuracy_score(yTest, yPred))  # Print accuracy
     print("Classification Report:")
-    print(classification_report(y_test, y_pred))  # Print classification report
+    print(classification_report(yTest, yPred))  # Print classification report
 
     # Save the trained SVM model
     with open(model_name, 'wb') as modelFile:
