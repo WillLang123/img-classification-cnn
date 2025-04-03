@@ -15,25 +15,21 @@ def processImage(directory, imagePath):
     path = os.path.join(directory, imagePath)
     image = cv2.imread(path)  # read image
     imageCopy = copy.deepcopy(image)  # copy image
-
     image = cv2.resize(image, (CONST.IMG_SIZE, CONST.IMG_SIZE))  # resize image
     normImage = image.astype('float') / 255.0  # normalize image
-    return imageCopy, normImage  # return processed image
+    return imageCopy, normImage  # return processed image and copy of original
 
 # writes predictions to video
 def videoWrite(model, i):
-    fourcc = cv2.VideoWriter_fourcc(*'DIVX')  # codec
+    videoSpecs = cv2.VideoWriter_fourcc(*'DIVX')  # codec
     filename = "./prediction" + str(i) + ".mp4"
-    out = cv2.VideoWriter(filename, fourcc, 1.0, (400, 400))  # output video
-
+    out = cv2.VideoWriter(filename, videoSpecs, 1.0, (400, 400))  # output video
     prediction = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
-
     font = cv2.FONT_HERSHEY_SIMPLEX
     location = (20, 30)
     fontScale = 0.5
     fontColor = (255, 255, 255)
     lineType = 2
-
     DIR = CONST.TEST_DIR
     MAX = CONST.OUTPUT_SIZE
     imagePaths = os.listdir(DIR)
@@ -71,10 +67,8 @@ def videoWrite(model, i):
         
         # Add the prediction to the image
         cv2.putText(image, s, location, font, fontScale, fontColor, lineType)  # add text to image
-
         image = cv2.resize(image, (400, 400))  # resize image
         out.write(image)  # write to video
-        
         count += 1
         print(count)  # print progress
     out.release()  # release video
@@ -102,7 +96,7 @@ if __name__ == "__main__":
         trainImages1.append(item[0])
         trainLabels1.append(item[1])
     trainImages1 = np.array(trainImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    trainLabels1 = np.array(trainLabels1)
+    trainLabels1 = np.array(trainLabels1) #need to make numpy to fit input dimensions of x
 
     trainData2 = data2[:trainingSize]  # training data from dataset 2
     trainImages2, trainLabels2 = [], []
@@ -110,7 +104,7 @@ if __name__ == "__main__":
         trainImages2.append(item[0])
         trainLabels2.append(item[1])
     trainImages2 = np.array(trainImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
-    trainLabels2 = np.array(trainLabels2)
+    trainLabels2 = np.array(trainLabels2) #need to make numpy to fit input dimensions of x
 
     # splits the data into test sets for both datasets
     testData1 = data1[trainingSize:]  # test data from dataset 1
@@ -119,7 +113,7 @@ if __name__ == "__main__":
         testImages1.append(item[0])
         testLabels1.append(item[1])
     testImages1 = np.array(testImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    testLabels1 = np.array(testLabels1)
+    testLabels1 = np.array(testLabels1) #need to make numpy to fit input dimensions of x
 
     testData2 = data2[trainingSize:]  # test data from dataset 2
     testImages2, testLabels2 = [], []
@@ -127,7 +121,7 @@ if __name__ == "__main__":
         testImages2.append(item[0])
         testLabels2.append(item[1])
     testImages2 = np.array(testImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
-    testLabels2 = np.array(testLabels2)
+    testLabels2 = np.array(testLabels2) #need to make numpy to fit input dimensions of x
 
     # gets model to use
     model1 = getCNNModel()  # get CNN model for dataset 1
