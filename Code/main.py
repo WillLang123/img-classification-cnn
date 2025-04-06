@@ -11,17 +11,17 @@ from dataprep import prepData
 from cnn import getCNNModel
 from svm import SVMPredict, loadSVMModel, SVMTrain
 
-def processImage(directory, imagePath):
-    path = os.path.join(directory, imagePath)
-    image = cv2.imread(path)  # read image
-    imageCopy = copy.deepcopy(image)  # copy image
-    image = cv2.resize(image, (CONST.IMG_SIZE, CONST.IMG_SIZE))  # resize image
-    normImage = image.astype('float') / 255.0  # normalize image
+def processImage(dir, imagePath):
+    path = os.path.join(dir, imagePath)
+    normImage = cv2.imread(path)  # read image
+    imageCopy = copy.deepcopy(normImage)  # copy image
+    normImage = cv2.resize(normImage, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
+    normImage = normImage.astype('float') / 255.0  # normalize image
     return imageCopy, normImage  # return processed image and copy of original
 
 # writes predictions to video
 def videoWrite(model, i):
-    videoSpecs = cv2.VideoWriter_fourcc(*'DIVX')  # codec
+    videoSpecs = cv2.VideoWriter_fourcc(*'DIVX')  # needed for video changes to work
     filename = "./prediction" + str(i) + ".mp4"
     out = cv2.VideoWriter(filename, videoSpecs, 1.0, (400, 400))  # output video
     prediction = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
@@ -30,8 +30,8 @@ def videoWrite(model, i):
     fontScale = 0.5
     fontColor = (255, 255, 255)
     lineType = 2
-    DIR = CONST.TEST_DIR
-    MAX = CONST.OUTPUT_SIZE
+    DIR = CONST.TESTING
+    MAX = CONST.OUTPUTSIZE
     imagePaths = os.listdir(DIR)
     imagePaths = imagePaths[:MAX]  # limit to 100 images
     count = 0
@@ -41,7 +41,7 @@ def videoWrite(model, i):
         
         if isinstance(model, LinearSVC):  # If it's an SVM model
             # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
-            image_flattened = normImage.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
+            image_flattened = normImage.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)
             pred = SVMPredict(model, image_flattened)  # Use SVM model prediction
 
             # For SVM: pred is a single class label (either 0 or 1)
@@ -52,7 +52,7 @@ def videoWrite(model, i):
             s = prediction[int(arg_max[0])] + ' - ' + '100%'  # Always 100% for SVM
             
         elif isinstance(model, tf.keras.Model):  # If it's a CNN model (TensorFlow Keras Model)
-            normImage = normImage.reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # reshape image to fit CNN
+            normImage = normImage.reshape(-1, CONST.IMAGESIZE, CONST.IMAGESIZE, 3)  # reshape image to fit CNN
             pred = model.predict(normImage)  # Keras CNN prediction
 
             # For CNN: pred will be a probability vector, so we extract the class with the highest probability
@@ -78,11 +78,11 @@ def videoWrite(model, i):
 if __name__ == "__main__":
 
     # loads and preps images for models
-    data1 = prepData(CONST.TRAIN_DIR_1)  # loading images from train1
-    data2 = prepData(CONST.TRAIN_DIR_2)  # loading images from train2
+    data1 = prepData(CONST.TRAINING1)  # loading images from train1
+    data2 = prepData(CONST.TRAINING2)  # loading images from train2
 
     # figures out data size and what goes where
-    trainingSize = int(CONST.DATA_SIZE * CONST.SPLIT_RATIO)
+    trainingSize = int(CONST.DATASIZE * CONST.SPLITRATIO)
     print('data1', len(data1), trainingSize)  # size of data1
     print('data2', len(data2), trainingSize)  # size of data2
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     for item in trainData1:
         trainImages1.append(item[0])
         trainLabels1.append(item[1])
-    trainImages1 = np.array(trainImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainImages1 = np.array(trainImages1).reshape(-1, CONST.IMAGESIZE, CONST.IMAGESIZE, 3)  # resize images
     trainLabels1 = np.array(trainLabels1) #need to make numpy to fit input dimensions of x
 
     trainData2 = data2[:trainingSize]  # training data from dataset 2
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     for item in trainData2:
         trainImages2.append(item[0])
         trainLabels2.append(item[1])
-    trainImages2 = np.array(trainImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize images
+    trainImages2 = np.array(trainImages2).reshape(-1, CONST.IMAGESIZE, CONST.IMAGESIZE, 3)  # resize images
     trainLabels2 = np.array(trainLabels2) #need to make numpy to fit input dimensions of x
 
     # splits the data into test sets for both datasets
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     for item in testData1:
         testImages1.append(item[0])
         testLabels1.append(item[1])
-    testImages1 = np.array(testImages1).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testImages1 = np.array(testImages1).reshape(-1, CONST.IMAGESIZE, CONST.IMAGESIZE, 3)  # resize test images
     testLabels1 = np.array(testLabels1) #need to make numpy to fit input dimensions of x
 
     testData2 = data2[trainingSize:]  # test data from dataset 2
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     for item in testData2:
         testImages2.append(item[0])
         testLabels2.append(item[1])
-    testImages2 = np.array(testImages2).reshape(-1, CONST.IMG_SIZE, CONST.IMG_SIZE, 3)  # resize test images
+    testImages2 = np.array(testImages2).reshape(-1, CONST.IMAGESIZE, CONST.IMAGESIZE, 3)  # resize test images
     testLabels2 = np.array(testLabels2) #need to make numpy to fit input dimensions of x
 
     # gets model to use

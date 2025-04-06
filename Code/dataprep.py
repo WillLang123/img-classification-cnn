@@ -7,7 +7,7 @@ import cv2
 # labels image based on filename
 def labelImage(name):
     imageLabel = name.split('.')[0]
-    label = CONST.LABEL_MAP[imageLabel]
+    label = CONST.LABELMAP[imageLabel]
     labels = np.zeros(2)
     labels[label] = 1
     return labels
@@ -24,17 +24,17 @@ def prepData(dir):
         label = labelImage(imagePath)  # get label for image
         path = os.path.join(DIR, imagePath)
         image = cv2.imread(path)  # read image
-        image = cv2.resize(image, (CONST.IMG_SIZE, CONST.IMG_SIZE))  # resize image
+        image = cv2.resize(image, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
         image = image.astype('float') / 255.0  # normalize image
         data.append([image, label])  # add image and label to data
         # print(count, image.shape, label.shape,data[count][1])  # print shape for debugging
         count += 1
-        if count == CONST.DATA_SIZE:  # limit to DATA_SIZE images
+        if count == CONST.DATASIZE:  # limit to DATASIZE images
             break
     shuffle(data)  # shuffle data after loading
     data = np.array(data, dtype=object) #need it to be object datatype for some numpy reason
     return data
 
 if __name__ == "__main__":
-    prepData(CONST.TRAIN_DIR_1)  # load and prep data for train1
-    prepData(CONST.TRAIN_DIR_2)  # load and prep data for train2
+    prepData(CONST.TRAINING1)  # load and prep data for train1
+    prepData(CONST.TRAINING2)  # load and prep data for train2

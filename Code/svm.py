@@ -11,7 +11,7 @@ def SVMTrain(data, model_name="svm_model.pkl"):
     labels = np.argmax(labels, axis=1)  # Convert encoded labels to class labels (0 or 1)
 
     # Flatten images for SVM
-    flattenedImages = images.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)
+    flattenedImages = images.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)
 
     # Split data into train and test sets
     xTrain, xTest, yTrain, yTest = train_test_split(flattenedImages, labels, test_size=0.2, random_state=42)
@@ -49,7 +49,7 @@ def loadSVMModel(model_name="svm_model.pkl"):
 
 # makes predictions with SVM model
 def SVMPredict(model, images):
-    flattenedImages = images.reshape(-1, CONST.IMG_SIZE * CONST.IMG_SIZE * 3)  # flatten images
+    flattenedImages = images.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)  # flatten images
     if(model is not None):
         return model.predict(flattenedImages)  # return predictions
     else:

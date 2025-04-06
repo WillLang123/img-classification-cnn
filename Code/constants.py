@@ -1,15 +1,13 @@
-TRAIN_DIR_1 = './train1'
-TRAIN_DIR_2 = './train2'
-TEST_DIR = './test'
-CAT_LBL = 0
-DOG_LBL = 1
+TRAINING1 = './train1'
+TRAINING2 = './train2'
+TESTING = './test'
 CAT = 'cat'
 DOG = 'dog'
-LABEL_MAP = {
-    CAT: CAT_LBL,
-    DOG: DOG_LBL
+LABELMAP = {
+    CAT: 0,
+    DOG: 1
 }
-DATA_SIZE = 60 # manages amount of input data coming in
-IMG_SIZE = 110
-SPLIT_RATIO = 0.8
-OUTPUT_SIZE = 60 # manages size of output
+DATASIZE = 6000 # manages amount of input data coming in
+IMAGESIZE = 110
+SPLITRATIO = 0.8
+OUTPUTSIZE = 60 # manages size of output
