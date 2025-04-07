@@ -48,8 +48,12 @@ def videoWrite(model, i):
             raise TypeError("Unknown model type: " + str(type(model)))
         
         # Add the prediction to the image
-        cv2.putText(image, s, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)  # add text to image with putText(image, text, location, font, font size, color, and line)
-        image = cv2.resize(image, (400, 400))  # resize image
+        white = [255,255,255]
+        textPlace = [20,20]
+        fontSize = .5
+        outputDim = [400,400]
+        cv2.putText(image, s, textPlace, cv2.FONT_HERSHEY_SIMPLEX, fontSize, white)
+        image = cv2.resize(image, outputDim)  # resize image
         out.write(image)  # write to video
         count += 1
         print(count)  # print progress
@@ -69,7 +73,7 @@ if __name__ == "__main__":
     # print('data2', len(data2), trainingSize)  # size of data2
 
     # sets up tensorboard callback to use for CNN model
-    tensorboard_callback = TensorBoard(log_dir='./logs', histogram_freq=1)
+    tfCallback = TensorBoard(log_dir='./logs', histogram_freq=1)
 
     # splits the data into training and testing sets for both datasets
     trainData1 = data1[:trainingSize]  # training data from dataset 1
@@ -110,7 +114,7 @@ if __name__ == "__main__":
     print('dataset 1 training started...')
     history = model1.fit(
         trainImages1, trainLabels1, batch_size=50, epochs=15, verbose=1,
-        validation_data=(testImages1, testLabels1), callbacks=[tensorboard_callback]
+        validation_data=(testImages1, testLabels1), callbacks=[tfCallback]
     )
     print('dataset 1 training done...')
 
@@ -124,7 +128,7 @@ if __name__ == "__main__":
     print('dataset 2 training started...')
     history = model2.fit(
         trainImages2, trainLabels2, batch_size=50, epochs=15, verbose=1,
-        validation_data=(testImages2, testLabels2), callbacks=[tensorboard_callback]
+        validation_data=(testImages2, testLabels2), callbacks=[tfCallback]
     )
     print('dataset 2 training done...')
 
