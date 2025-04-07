@@ -5,7 +5,7 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 
-def SVMTrain(data, model_name="svm_model.pkl"):
+def SVMTrain(data, name):
     images = np.array([i[0] for i in data])  # get images
     labels = np.array([i[1] for i in data])  # get labels
     labels = np.argmax(labels, axis=1)  # Convert encoded labels to class labels (0 or 1)
@@ -31,17 +31,15 @@ def SVMTrain(data, model_name="svm_model.pkl"):
     print(classification_report(yTest, yPred))  # Print classification report
 
     # Save the trained SVM model
-    with open(model_name, 'wb') as modelFile:
-        pickle.dump(svm, modelFile)
-    print(f"SVM Model saved to {model_name}")  # Notify that model is saved
+    pickle.dump(svm, open(name, 'wb'))
+    print(f"SVM Model saved to {name}")  # Notify that model is saved
 
 
 # loads the saved SVM model
-def loadSVMModel(model_name="svm_model.pkl"):
+def loadSVMModel(name):
     try:
-        with open(model_name, 'rb') as modelFile:
-            svm = pickle.load(modelFile)
-        print(f"SVM Model loaded successfully from {model_name}")
+        svm = pickle.load(open(name, 'rb'))
+        print(f"SVM Model loaded successfully from {name}")
         return svm
     except Exception as e:
         print(f"Error loading model: {e}")

@@ -7,7 +7,7 @@ LABELMAP = {
     CAT: 0,
     DOG: 1
 }
-DATASIZE = 6000 # manages amount of input data coming in
+DATASIZE = 60 # manages amount of input data coming in
 IMAGESIZE = 110
 SPLITRATIO = 0.8
 OUTPUTSIZE = 60 # manages size of output

@@ -2,47 +2,29 @@ import numpy as np
 import pickle
 import os
 import cv2
-import copy
 from tensorflow.keras.callbacks import TensorBoard
 import tensorflow as tf
 from sklearn.svm import LinearSVC
 import constants as CONST
-from dataprep import prepData
+from dataprep import prepData, processImage
 from cnn import getCNNModel
 from svm import SVMPredict, loadSVMModel, SVMTrain
 
-def processImage(dir, imagePath):
-    path = os.path.join(dir, imagePath)
-    normImage = cv2.imread(path)  # read image
-    imageCopy = copy.deepcopy(normImage)  # copy image
-    normImage = cv2.resize(normImage, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
-    normImage = normImage.astype('float') / 255.0  # normalize image
-    return imageCopy, normImage  # return processed image and copy of original
-
 # writes predictions to video
 def videoWrite(model, i):
-    videoSpecs = cv2.VideoWriter_fourcc(*'DIVX')  # needed for video changes to work
-    filename = "./prediction" + str(i) + ".mp4"
-    out = cv2.VideoWriter(filename, videoSpecs, 1.0, (400, 400))  # output video
-    prediction = {1: 'Dog', 0: 'Cat'}  # mapping for predictions
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    location = (20, 30)
-    fontScale = 0.5
-    fontColor = (255, 255, 255)
-    lineType = 2
-    DIR = CONST.TESTING
-    MAX = CONST.OUTPUTSIZE
-    imagePaths = os.listdir(DIR)
-    imagePaths = imagePaths[:MAX]  # limit to 100 images
+    out = cv2.VideoWriter(("./prediction" + str(i) + ".mp4"), cv2.VideoWriter_fourcc(*'mp4v'), 1.0, (400, 400))  # output video
+    prediction = {1: 'dog', 0: 'cat'}
+    imagePaths = os.listdir(CONST.TESTING)
+    imagePaths = imagePaths[:CONST.OUTPUTSIZE]  # limit to 100 images
     count = 0
 
     for imagePath in imagePaths:
-        image, normImage = processImage(DIR, imagePath)  # process image
+        image, normImage = processImage(CONST.TESTING, imagePath)  # process image
         
         if isinstance(model, LinearSVC):  # If it's an SVM model
             # Flatten the image for SVM (SVM expects 2D input with shape (n_samples, n_features))
-            image_flattened = normImage.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)
-            pred = SVMPredict(model, image_flattened)  # Use SVM model prediction
+            flattenedImages = normImage.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)
+            pred = SVMPredict(model, flattenedImages)  # Use SVM model prediction
 
             # For SVM: pred is a single class label (either 0 or 1)
             # SVM is a hard classifier, so we assume 100% confidence
@@ -66,7 +48,7 @@ def videoWrite(model, i):
             raise TypeError("Unknown model type: " + str(type(model)))
         
         # Add the prediction to the image
-        cv2.putText(image, s, location, font, fontScale, fontColor, lineType)  # add text to image
+        cv2.putText(image, s, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)  # add text to image with putText(image, text, location, font, font size, color, and line)
         image = cv2.resize(image, (400, 400))  # resize image
         out.write(image)  # write to video
         count += 1
@@ -83,8 +65,8 @@ if __name__ == "__main__":
 
     # figures out data size and what goes where
     trainingSize = int(CONST.DATASIZE * CONST.SPLITRATIO)
-    print('data1', len(data1), trainingSize)  # size of data1
-    print('data2', len(data2), trainingSize)  # size of data2
+    # print('data1', len(data1), trainingSize)  # size of data1
+    # print('data2', len(data2), trainingSize)  # size of data2
 
     # sets up tensorboard callback to use for CNN model
     tensorboard_callback = TensorBoard(log_dir='./logs', histogram_freq=1)
@@ -133,9 +115,8 @@ if __name__ == "__main__":
     print('dataset 1 training done...')
 
     # save history of training
-    history_file = '1000_history.pickle'
-    with open(history_file, 'wb') as file:
-        pickle.dump(history.history, file)
+    historyFile1 = '6000History1.pickle'
+    pickle.dump(history.history, open(historyFile1, 'wb'))
 
 
     # trains model 2
@@ -148,26 +129,25 @@ if __name__ == "__main__":
     print('dataset 2 training done...')
 
     # save history of training
-    history_file = '1000_history.pickle'
-    with open(history_file, 'wb') as file:
-        pickle.dump(history.history, file)
+    historyFile2 = '6000History2.pickle'
+    pickle.dump(history.history, open(historyFile2, 'wb'))
 
     # writes output to video
     videoWrite(model1,1)  # write model 1 predictions to video
     videoWrite(model2,2)  # write model 2 predictions to video
 
     # trains svm models
-    SVMModel1 = SVMTrain(data1, model_name="svm_model1.pkl")
-    SVMModel2 = SVMTrain(data2, model_name="svm_model2.pkl")
+    SVMModel1 = SVMTrain(data1, "svm1.pkl")
+    SVMModel2 = SVMTrain(data2, "svm2.pkl")
 
     # loads svm models and make predictions
-    loadedSVMModel1 = loadSVMModel(model_name="svm_model1.pkl")
+    loadedSVMModel1 = loadSVMModel(name="svm1.pkl")
     SVMPredictions1 = SVMPredict(loadedSVMModel1, testImages1)
-    print("SVM 1 Predictions on test data1:", SVMPredictions1)  # print svm model 1 predictions
+    # print("SVM 1 Predictions on test data1:", SVMPredictions1)  # print svm model 1 predictions
 
-    loadedSVMModel2 = loadSVMModel(model_name="svm_model2.pkl")
+    loadedSVMModel2 = loadSVMModel(name="svm2.pkl")
     SVMPredictions2 = SVMPredict(loadedSVMModel2, testImages2)
-    print("SVM 2 Predictions on test data2:", SVMPredictions2)  # print svm model 2 predictions
+    # print("SVM 2 Predictions on test data2:", SVMPredictions2)  # print svm model 2 predictions
 
     # writes classification answer
     videoWrite(loadedSVMModel1,3)  # write model 1 predictions to video

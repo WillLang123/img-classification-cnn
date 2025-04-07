@@ -3,6 +3,15 @@ import os
 from random import shuffle
 import constants as CONST
 import cv2
+import copy
+
+def processImage(dir, imagePath):
+    path = os.path.join(dir, imagePath)
+    normImage = cv2.imread(path)  # read image
+    imageCopy = copy.deepcopy(normImage)  # copy image
+    normImage = cv2.resize(normImage, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
+    normImage = normImage.astype('float') / 255.0  # normalizes image to somewhere between 0 and 1
+    return imageCopy, normImage  # return processed image and copy of original
 
 # labels image based on filename
 def labelImage(name):
@@ -34,7 +43,3 @@ def prepData(dir):
     shuffle(data)  # shuffle data after loading
     data = np.array(data, dtype=object) #need it to be object datatype for some numpy reason
     return data
-
-if __name__ == "__main__":
-    prepData(CONST.TRAINING1)  # load and prep data for train1
-    prepData(CONST.TRAINING2)  # load and prep data for train2
