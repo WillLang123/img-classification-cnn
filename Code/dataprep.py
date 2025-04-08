@@ -2,14 +2,15 @@ import numpy as np
 import os
 from random import shuffle
 import constants as CONST
-import cv2
-import copy
+from cv2 import imread, resize
+from copy import deepcopy
 
 def processImage(dir, imagePath):
-    path = os.path.join(dir, imagePath)
-    normImage = cv2.imread(path)  # read image
-    imageCopy = copy.deepcopy(normImage)  # copy image
-    normImage = cv2.resize(normImage, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
+    imageDim = (CONST.IMAGESIZE, CONST.IMAGESIZE)
+    path = os.path.join(dir,imagePath)
+    normImage = imread(path)  # reads the image
+    imageCopy = deepcopy(normImage)  # copy image
+    normImage = resize(normImage, imageDim)  # resize image
     normImage = normImage.astype('float') / 255.0  # normalizes image to somewhere between 0 and 1
     return imageCopy, normImage  # return processed image and copy of original
 
@@ -24,18 +25,18 @@ def labelImage(name):
 # loads and prepares image data
 def prepData(dir):
     print(os.getcwd())  # for debugging
-    DIR = dir
     data = []
-    imagePaths = os.listdir(DIR)
+    imagePaths = os.listdir(dir)
     shuffle(imagePaths)  # shuffle image paths for randomness
     count = 0
+    outputDim = (CONST.IMAGESIZE, CONST.IMAGESIZE)
     for imagePath in imagePaths:
         label = labelImage(imagePath)  # get label for image
-        path = os.path.join(DIR, imagePath)
-        image = cv2.imread(path)  # read image
-        image = cv2.resize(image, (CONST.IMAGESIZE, CONST.IMAGESIZE))  # resize image
-        image = image.astype('float') / 255.0  # normalize image
-        data.append([image, label])  # add image and label to data
+        path = os.path.join(dir, imagePath)
+        image = imread(path)  # read image
+        image = resize(image, outputDim)  # resize image
+        normImage = image.astype('float') / 255.0  # normalize image
+        data.append([normImage, label])  # add image and label to data
         # print(count, image.shape, label.shape,data[count][1])  # print shape for debugging
         count += 1
         if count == CONST.DATASIZE:  # limit to DATASIZE images
