@@ -14,7 +14,7 @@ def SVMTrain(data, name):
     flattenedImages = images.reshape(-1, CONST.IMAGESIZE * CONST.IMAGESIZE * 3)
 
     # Split data into train and test sets
-    xTrain, xTest, yTrain, yTest = train_test_split(flattenedImages, labels, test_size=0.2, random_state=42)
+    xTrain, xTest, yTrain, yTest = train_test_split(flattenedImages, labels, test_size=(1-CONST.SPLITRATIO))
 
     # Train SVM model
     print("making svm")
