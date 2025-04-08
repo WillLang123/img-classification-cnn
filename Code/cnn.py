@@ -1,7 +1,7 @@
 import tensorflow
 import constants as CONST
-from keras.layers import Input, Conv2D, MaxPooling2D, Flatten, BatchNormalization, Dense, Dropout
 from keras import activations, optimizers, losses, metrics
+from keras.layers import Input, Conv2D, MaxPooling2D, Flatten, BatchNormalization, Dense, Dropout
 
 # builds the CNN model
 def getCNNModel():
@@ -47,7 +47,7 @@ def getCNNModel():
         metrics = [metrics.BinaryAccuracy(), metrics.FalsePositives()])
     print('model prepared...')
     return model
-    # How I figured out the model layers:
+    # How I figured out the model layers sizes:
     # model.add(Input(shape=inputDim))
     # model.add(Conv2D(64, (3,3), activation=activations.relu))
     # model.summary() #debugging

@@ -6,8 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 
 def SVMTrain(data, name):
-    images = np.array([i[0] for i in data])  # get images
-    labels = np.array([i[1] for i in data])  # get labels
+    images = [] # get images
+    labels = [] # get labels
+    for i in data:
+        images.append(i[0])
+        labels.append(i[1])
+    images = np.array(images) # fix array dims
+    labels = np.array(labels) # fix array dims
     labels = np.argmax(labels, axis=1)  # Convert encoded labels to class labels (0 or 1)
 
     # Flatten images for SVM
